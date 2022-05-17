@@ -47,7 +47,20 @@ services:
       MYSQL_ROOT_PASSWORD: 123123
     networks:
       - app-network
-
+  phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      container_name: pma
+      links:
+        - db
+      environment:
+        PMA_HOST: db
+        PMA_PORT: 3306
+        PMA_ARBITRARY: 1
+      restart: always
+      ports:
+        - 8080:80
+      networks:
+        - app-network
   # node:
   #   image: node:14.15.4
   #   working_dir: /var/www
