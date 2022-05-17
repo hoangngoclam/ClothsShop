@@ -46,7 +46,12 @@ class OrderDetailController extends AdminController
     {
         $show = new Show(OrderDetail::findOrFail($id));
 
-        
+        $show->field('id', __('Id'));
+        $show->field('order_id', __('Order id'));
+        $show->field('product_id', __('Product id'));
+        $show->field('quantity', __('Quantity'));
+        $show->field('created_at', __('Created at'));
+        $show->field('updated_at', __('Updated at'));
 
         return $show;
     }
@@ -60,7 +65,9 @@ class OrderDetailController extends AdminController
     {
         $form = new Form(new OrderDetail());
 
-
+        $form->number('order_id', __('Order id'));
+        $form->number('product_id', __('Product id'));
+        $form->number('quantity', __('Quantity'));
 
         return $form;
     }
