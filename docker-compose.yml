@@ -14,7 +14,7 @@ services:
     volumes:
       - ./project:/var/www
       - ./.docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
-    command: /bin/sh -c "chmod 777 ./entrypoint.sh && ./entrypoint.sh"
+    # command: /bin/sh -c "chmod 777 ./entrypoint.sh && ./entrypoint.sh"
     networks:
       - app-network
 
