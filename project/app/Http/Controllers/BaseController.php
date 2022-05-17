@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\View;
+use App\Services\BrandService;
+use App\Services\CategoryService;
+use App\Services\ProductService;
+use App\Services\SliderService;
+use App\Services\RepairServiceService;
+use App\Services\EmailService;
+
+class BaseController extends Controller
+{
+    public $productService;
+    public $brandService;
+    public $categoryService;
+    public $sliderService;
+    public $repairServiceService;
+    public $emailService;
+
+    public function __construct()
+    {
+        $this->productService = new ProductService();
+        $this->brandService = new BrandService();
+        $this->categoryService = new CategoryService();
+        $this->sliderService = new SliderService();
+        $this->repairServiceService = new RepairServiceService();
+        $this->emailService = new EmailService();
+
+        $brands =  $this->brandService->getBrands();
+        // Get phone components categories
+        $categories = $this->categoryService->getCategoriesLevel2(2, 15);
+        // Get phone accessories categories
+        $accCategories = $this->categoryService->getCategoriesLevel2(3, 15);
+
+        $allCategories = $this->categoryService->getCategories();
+
+        $allCategoriesProcessed = [];
+        $categoriesLevel2 = [];
+        foreach ($allCategories as $key => $category) {
+            if ($category->parentId == null) {
+                array_push($allCategoriesProcessed, ['id' => $category->id, 'name' => $category->name]);
+            } else {
+
+                array_push($categoriesLevel2, ['parentId' => $category->parentId, 'id' => $category->id, 'name' => $category->name]);
+            }
+        }
+
+        foreach ($categoriesLevel2 as $key => $categoryLevel2) {
+            $key = array_search($categoryLevel2['parentId'], array_column($allCategoriesProcessed, 'id'));
+            $allCategoriesProcessed[$key]['categoriesLv2'][] = $categoryLevel2;
+        }
+        $productCategoryLevel1 = $this->categoryService->getArrCategoriesLevel1();
+        $productCategorys = array_map(function ($item) {
+            $childrenCategory = $this->categoryService->getArrCategoriesLevel2($item["id"]);
+            $item["childrenCategory"] = $childrenCategory;
+            $item["type"] = "product";
+            return $item;
+        }, $productCategoryLevel1);
+
+        $shopPhoneNumber = "092-968-2986";
+        $shopEmail = "tstorecontact@gmail.com";
+        $shopAddress = "46 Đường Thông Thiên Học, Phường 2, TP.Đà Lạt, Lâm Đồng";
+        $googleMapURL = "https://goo.gl/maps/cL4kAimnfaGRno3MA";
+        $listAllCategory = $productCategorys;
+        // Sharing is caring
+        View::share(compact('googleMapURL', 'shopPhoneNumber', 'shopEmail', 'shopAddress', 'brands', 'categories', 'allCategoriesProcessed', 'accCategories', 'productCategorys', 'listAllCategory'));
+    }
+}
