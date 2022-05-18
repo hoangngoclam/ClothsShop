@@ -8,6 +8,12 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 
+use Encore\Admin\Facades\Admin;
+use Encore\Admin\Layout\Content;
+use Encore\Admin\Controllers\ModelForm;
+use Encore\Admin\Tree;
+
+
 class ProductCategoryController extends AdminController
 {
     /**
@@ -16,6 +22,21 @@ class ProductCategoryController extends AdminController
      * @var string
      */
     protected $title = 'ProductCategory';
+
+    public function index(Content $content)
+    {
+        return Admin::content(function ($content) {
+            $content > header ('ProductCategory');
+            $content->body(ProductCategory::tree(function ($tree) {
+                $tree->branch(function ($branch) {    
+                    $src = '/uploads/' . $branch['image'] ;
+                    $logo = "<img src='$src' style='max-width:30px;max-height:30px' class='img'/>";
+
+                    return "{$branch['id']} - {$branch['name']} - $logo";
+                });
+            }));
+        });
+    }
 
     /**
      * Make a grid builder.
@@ -48,7 +69,8 @@ class ProductCategoryController extends AdminController
         $show = new Show(ProductCategory::findOrFail($id));
 
         $show->field('id', __('Id'));
-        $show->field('parentId', __('ParentId'));
+        $show->field('parent_id', __('ParentId'));
+        $show->field('order', __('Order'));
         $show->field('show_flag', __('Show flag'));
         $show->field('name', __('Name'));
         $show->field('image', __('Image'));
@@ -59,6 +81,8 @@ class ProductCategoryController extends AdminController
         $show->field('meta_keywords', __('Meta keywords'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
+
+        $form->select('parent_id', __('Parent id'))->options(Category::selectOptions())->default(1);
 
         return $show;
     }
@@ -72,7 +96,8 @@ class ProductCategoryController extends AdminController
     {
         $form = new Form(new ProductCategory());
 
-        $form->number('parentId', __('ParentId'));
+        $form->number('parent_id', __('ParentId'));
+        $form->number('order', __('Order'));
         $form->switch('show_flag', __('Show flag'));
         $form->text('name', __('Name'));
         $form->image('image', __('Image'));
@@ -82,5 +107,10 @@ class ProductCategoryController extends AdminController
         $form->textarea('meta_desc', __('Meta desc'));
         $form->textarea('meta_keywords', __('Meta keywords'));
         return $form;
+    }
+
+    public function getCategoryOptions()
+    {
+        return DB::table('product_categories')->select('id','id')->get();
     }
 }

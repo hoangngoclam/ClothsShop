@@ -37,7 +37,7 @@ class Product extends Model
 
     public function getCategoriesLvl2($catLvl1Id)
     {
-        return ProductCategory::where('parentId', $catLvl1Id)->get();
+        return ProductCategory::where('parent_id', $catLvl1Id)->get();
     }
 
     public function getCategoryLv1Name()
