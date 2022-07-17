@@ -30,8 +30,6 @@ class DistrictController extends AdminController
         $grid->column('name', __('Name'));
         $grid->column('type', __('Type'));
         $grid->column('matp', __('Matp'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
 
         return $grid;
     }

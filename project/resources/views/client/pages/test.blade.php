@@ -1,6 +1,7 @@
 @extends('client.layouts.master')
 @section('content')
-    
+asfasdf
+{{config("name")}}
 <!-- START SECTION BANNER -->
 <div class="banner_section slide_medium shop_banner_slider staggered-animation-wrap">
     <div id="carouselExampleControls" class="carousel slide carousel-fade light_arrow" data-ride="carousel">

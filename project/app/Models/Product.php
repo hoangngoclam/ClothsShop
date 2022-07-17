@@ -26,10 +26,6 @@ class Product extends Model
         'meta_keywords',
         'meta_title'
     ];
-    public function images()
-    {
-        return $this->hasMany("App\Models\ProductImage", "product_id", "id");
-    }
     public function firstImage()
     {
         return explode("|", $this->images)[0];
